@@ -1,4 +1,4 @@
 python-dotenv
-openai
+openai==0.28.1
 Flask
-Flask-Dance[google]=6.2.0
+pytest

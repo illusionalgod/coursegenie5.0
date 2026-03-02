@@ -1,29 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CourseGenie</title>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <div class="chat-wrapper">
-        <div class="chat-header">
-            <h1 class="logo">
-                <img src="{{ url_for('static', filename='img/coursegenie2.png') }}" alt="CourseGenie Logo">
-                CourseGenie
-            </h1>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  </head>
+  <body>
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Top Header -->
+      <div class="top-header">
+        <div class="header-title" id="chat-title">
+          <span class="title-text"></span>
         </div>
-        <div class="chat-content" id="chat-history"></div>
-        <div class="chat-footer">
-            <form id="chat-form" onsubmit="sendMessage(event)">
-                <input id="chat-input" type="text" placeholder="Type your message..." autocomplete="off" required>
-                <button type="submit">Send</button>
-            </form>
+
+        <div class="header-actions">
+          <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+          </button>
         </div>
+      </div>
+
+      <!-- Chat Area -->
+      <div class="chat-area" id="chat-history"></div>
+
+      <!-- Input Area -->
+      <div class="input-area">
+        <form id="chat-form" onsubmit="sendMessage(event)">
+          <div class="input-wrapper">
+            <input
+              id="chat-input"
+              type="text"
+              placeholder="Message CourseGenie"
+              autocomplete="off"
+              required
+            />
+            <button type="submit" class="send-btn" title="Send message">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 16 16 12 12 8" />
+                <line x1="8" y1="12" x2="16" y2="12" />
+              </svg>
+            </button>
+          </div>
+        </form>
+        <div class="input-footer">AI-generated, for reference only</div>
+      </div>
     </div>
+
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-</body>
+  </body>
 </html>

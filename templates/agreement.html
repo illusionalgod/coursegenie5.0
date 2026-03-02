@@ -1,46 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User Agreement</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/agreement.css') }}">
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/agreement.css') }}"
+    />
+  </head>
+  <body>
     <div class="container">
-        <h1>User Agreement</h1>
-        <p>By accessing and using the CourseGenie - Course Recommendation Chatbot, you agree to the following terms and conditions:</p>
+      <h1>User Agreement</h1>
+      <p>
+        By accessing and using the CourseGenie - Course Recommendation Chatbot,
+        you agree to the following terms and conditions:
+      </p>
 
-        <ul>
-            <li>Personalization of Recommendations: The Chatbot provides personalized course recommendations based on the interests and hobbies you provide. 
-                However, please note that these recommendations are generated based on the information provided and may not encompass all available courses.</li>
+      <ul>
+        <li>
+          Personalization of Recommendations: The Chatbot provides personalized
+          course recommendations based on the interests and hobbies you provide.
+          However, please note that these recommendations are generated based on
+          the information provided and may not encompass all available courses.
+        </li>
 
-            <li>Accuracy of Information: While we strive to provide accurate and up-to-date information, 
-                the Chatbot's course recommendations and information about courses offered at Methodist University Ghana are subject to change. 
-                It is advisable to verify the information with the university or relevant sources.</li>
+        <li>
+          Accuracy of Information: While we strive to provide accurate and
+          up-to-date information, the Chatbot's course recommendations and
+          information about courses offered at Ghana Communication Technology
+          University are subject to change. It is advisable to verify the
+          information with the university or relevant sources.
+        </li>
 
-            <li>Limitations: The Chatbot can only recommend courses offered at Methodist University Ghana. 
-                Additionally, it does not have access to real-time course availability or enrollment status.</li>
+        <li>
+          Limitations: The Chatbot can only recommend courses offered at Ghana
+          Communication Technology University. Additionally, it does not have
+          access to real-time course availability or enrollment status.
+        </li>
 
-            <li>Privacy: We respect your privacy. The Chatbot does not collect or store any personal information provided by you. 
-                Your interactions with the Chatbot are anonymous and not linked to any identifiable data.</li>
+        <li>
+          Privacy: We respect your privacy. The Chatbot does not collect or
+          store any personal information provided by you. Your interactions with
+          the Chatbot are anonymous and not linked to any identifiable data.
+        </li>
 
-            <li>Use of Information: The data you provide, including your interests and hobbies, may be used to improve the Chatbot's 
-                recommendation algorithm and enhance its performance. However, this information is anonymized and used in an aggregated and non-identifiable manner.</li>
+        <li>
+          Use of Information: The data you provide, including your interests and
+          hobbies, may be used to improve the Chatbot's recommendation algorithm
+          and enhance its performance. However, this information is anonymized
+          and used in an aggregated and non-identifiable manner.
+        </li>
 
-            <li>Liability: While we make efforts to provide accurate and helpful recommendations, we do not guarantee the accuracy, 
-                completeness, or suitability of the course recommendations provided by the Chatbot. 
-                We shall not be held liable for any decisions made based on the Chatbot's recommendations.</li>
+        <li>
+          Liability: While we make efforts to provide accurate and helpful
+          recommendations, we do not guarantee the accuracy, completeness, or
+          suitability of the course recommendations provided by the Chatbot. We
+          shall not be held liable for any decisions made based on the Chatbot's
+          recommendations.
+        </li>
 
-            <li>Acceptance of Risks: The use of the Chatbot is at your own risk. We shall not be responsible for any loss, 
-                damage, or inconvenience caused by the reliance on the Chatbot's recommendations or the information provided.</li>
+        <li>
+          Acceptance of Risks: The use of the Chatbot is at your own risk. We
+          shall not be responsible for any loss, damage, or inconvenience caused
+          by the reliance on the Chatbot's recommendations or the information
+          provided.
+        </li>
 
-            <li><a href="https://openai.com/terms/">OpenAI Terms and Conditions
-            </a>: The Chatbot utilizes OpenAI's technology. Please review the OpenAI terms and conditions for additional information.</li>
-        
-            <li><a href="{{ url_for('home') }}">Click to return to homepage</a></li>
-        </ul>
+        <li>
+          <a href="https://openai.com/terms/">OpenAI Terms and Conditions </a>:
+          The Chatbot utilizes OpenAI's technology. Please review the OpenAI
+          terms and conditions for additional information.
+        </li>
+
+        <li><a href="{{ url_for('home') }}">Click to return to homepage</a></li>
+      </ul>
     </div>
-</body>
+  </body>
 </html>

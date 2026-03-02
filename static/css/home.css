@@ -1,147 +1,162 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
 }
 
 .customheader {
-    padding-top: 50px;
-    background-color: #333;
-    text-align: center;
-    font-size: 3.0em;
-    color: #fff;
-    font-weight: bold;
+  padding-top: 50px;
+  background-color: #333;
+  text-align: center;
+  font-size: 3em;
+  color: #fff;
+  font-weight: bold;
 }
 
 html {
-    background-color: #333;
+  background-color: #333;
 }
 
 .body1 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 80vh;
-    background: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  background: #333;
 }
 
 .container {
-    position: relative;
-    display: flex;
-    padding: 80px 40px;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 80px;
+  position: relative;
+  display: flex;
+  padding: 80px 40px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 80px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 40px 20px;
+    gap: 40px;
+  }
 }
 
 .card {
-    position: relative;
-    width: 250px;
-    height: 450px;
-    background: #494949;
-    transition: 0.5s;
+  position: relative;
+  width: 250px;
+  height: 450px;
+  background: #494949;
+  transition: 0.5s;
+}
+
+@media (max-width: 768px) {
+  .card {
+    width: 90%;
+    max-width: 300px;
+    height: auto;
+    min-height: 400px;
+  }
 }
 
 .card .lines::after {
-    content: '';
-    position: absolute;
-    inset: 3px;
-    background: #333;
+  content: "";
+  position: absolute;
+  inset: 3px;
+  background: #333;
 }
 
 .card .imgBx {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    width: 130px;
-    height: 130px;
-    transform: translateX(-50%);
-    transition: 0.5s;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  width: 130px;
+  height: 130px;
+  transform: translateX(-50%);
+  transition: 0.5s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .card .imgBx img {
-    position: absolute;
-    width: 100px;
-    filter: invert(1);
+  position: absolute;
+  width: 100px;
+  filter: invert(1);
 }
 
 .card .content {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    overflow: hidden;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  overflow: hidden;
 }
 
 .card .content .details {
-    padding: 30px 20px;
-    text-align: center;
-    width: 100%;
-    height: 70%;
+  padding: 30px 20px;
+  text-align: center;
+  width: 100%;
+  height: 70%;
 }
 
 .card .content .details h2 {
-    font-size: 2.0em;
-    font-weight: 500;
-    color: #4169E1;
-    line-height: 1.2em;
+  font-size: 2em;
+  font-weight: 500;
+  color: #4169e1;
+  line-height: 1.2em;
 }
 
 .card .content .details p {
-    color: #fff;
+  color: #fff;
 }
 
 .card:hover .content .details p {
-    opacity: 1;
+  opacity: 1;
 }
 
 .card .content .details p a:hover {
-    color: aqua;
+  color: aqua;
 }
 
 .card .content .details p a:active {
-    color: rgb(0, 178, 178);
+  color: rgb(0, 178, 178);
 }
 
 .card .content .details button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background: #4169E1;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.2em;
-    cursor: pointer;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #4169e1;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.2em;
+  cursor: pointer;
 }
 
 .card:hover .content .details button {
-    opacity: 1;
-    transform: translateY(0);
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .card .content .details button:hover {
-    background: #527cfa;
+  background: #527cfa;
 }
 
 .card .content .details button:active {
-    background: #3354b5;
-    border: none;
+  background: #3354b5;
+  border: none;
 }
 
 .card .content .details button:focus {
-    outline: none;
+  outline: none;
 }
 
-
 .card .content .details button:hover::before {
-    opacity: 1;
+  opacity: 1;
 }

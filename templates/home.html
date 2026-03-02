@@ -1,80 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CourseGenie - Course Recommendation Chatbot</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/home.css') }}">
-</head>
-<body>
-  <p class="customheader">CourseGenie</p>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='css/home.css') }}"
+    />
+  </head>
+  <body>
+    <p class="customheader">CourseGenie</p>
     <div class="body1">
       <div class="container">
         <div class="card">
           <div class="lines"></div>
           <div class="imgBx">
-            <img src="{{ url_for('static', filename='img/instructions.png') }}" alt="instructions-image">
+            <img
+              src="{{ url_for('static', filename='img/instructions.png') }}"
+              alt="instructions-image"
+            />
           </div>
           <div class="content">
             <div class="details">
               <h2>Instructions</h2>
-              <br>
-              <p>Think about your hobbies and interests related to the field of study.</p>
-              <br>
+              <br />
+              <p>
+                Think about your hobbies and interests related to the field of
+                study.
+              </p>
+              <br />
               <p>Type your interests in the chatbot input field.</p>
-              <br>
-              <p>Click the "Send" button to receive personalized course recommendations.</p>
+              <br />
+              <p>
+                Click the "Send" button to receive personalized course
+                recommendations.
+              </p>
             </div>
           </div>
         </div>
         <div class="card">
           <div class="lines"></div>
           <div class="imgBx">
-            <img src="{{ url_for('static', filename='img/capabilities.png') }}" alt="instructions-image">
+            <img
+              src="{{ url_for('static', filename='img/capabilities.png') }}"
+              alt="instructions-image"
+            />
           </div>
           <div class="content">
             <div class="details">
               <h2>Capabilities</h2>
-              <br>
-              <p>Provide recommendations based on your hobbies and interests.</p>
-              <br>
-              <p>Offer information about courses offered at Methodist University Ghana.</p>
-              <br>
-              <p>Answer questions about course descriptions and career opportunities.</p>
+              <br />
+              <p>
+                Provide recommendations based on your hobbies and interests.
+              </p>
+              <br />
+              <p>
+                Offer information about courses offered at Ghana Communication
+                Technology University.
+              </p>
+              <br />
+              <p>
+                Answer questions about course descriptions and career
+                opportunities.
+              </p>
             </div>
           </div>
         </div>
         <div class="card">
           <div class="lines"></div>
           <div class="imgBx">
-            <img src="{{ url_for('static', filename='img/limitations.png') }}" alt="instructions-image">
+            <img
+              src="{{ url_for('static', filename='img/limitations.png') }}"
+              alt="instructions-image"
+            />
           </div>
           <div class="content">
             <div class="details">
               <h2>Limitations</h2>
-              <br>
-              <p>Can only recommend courses offered at Methodist University Ghana.</p>
-              <br>
-              <p>Recommendations are based on details given and may not be exhaustive.</p>
-              <br>
-              <p>Does not have access to real-time course availability or enrollment status.</p>
+              <br />
+              <p>
+                Can only recommend courses offered at Ghana Communication
+                Technology University.
+              </p>
+              <br />
+              <p>
+                Recommendations are based on details given and may not be
+                exhaustive.
+              </p>
+              <br />
+              <p>
+                Does not have access to real-time course availability or
+                enrollment status.
+              </p>
             </div>
           </div>
-        </div> 
+        </div>
         <div class="card">
           <div class="lines"></div>
           <div class="imgBx">
-            <img src="{{ url_for('static', filename='img/agreement.png') }}" alt="instructions-image">
+            <img
+              src="{{ url_for('static', filename='img/agreement.png') }}"
+              alt="instructions-image"
+            />
           </div>
           <div class="content">
             <div class="details">
               <h2>Agreement</h2>
-              <br>
-              <p>By clicking "I Understand", you acknowledge that you have read and agreed to the terms and conditions.</p>
-              <br>
+              <br />
+              <p>
+                By clicking "I Understand", you acknowledge that you have read
+                and agreed to the terms and conditions.
+              </p>
+              <br />
               <p><a href="{{ url_for('agreement') }}">Terms & Conditions</a></p>
-              <br>
+              <br />
               <button onclick="navigateToChat()">I Understand</button>
             </div>
           </div>
@@ -82,5 +124,5 @@
       </div>
     </div>
     <script src="{{ url_for('static', filename='js/home.js') }}"></script>
-</body>
+  </body>
 </html>
