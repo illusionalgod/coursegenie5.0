@@ -40,3 +40,7 @@ secrets/
 credentials.json
 *.pem
 *.key
+
+career_model.pkl
+*.pkl
+career_recommendation_dataset.csv
