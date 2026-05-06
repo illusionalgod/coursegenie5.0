@@ -8,6 +8,9 @@ ENV/
 env/
 .env
 .env.*
+
+# Development scripts
+clear_sessions.py
 .venv/
 
 # IDEs and editors

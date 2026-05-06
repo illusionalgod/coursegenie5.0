@@ -317,6 +317,45 @@ def test_clear_chat():
             assert sess['chat_history'] == []
 
 
+def test_restore_chat_route():
+    """Test restoring chat history into the session"""
+    with app.test_client() as client:
+        with client.session_transaction() as sess:
+            sess['chat_history'] = []
+
+        response = client.post('/restore', json={
+            'history': [
+                {'question': 'What programs do you offer?', 'response': 'We offer IT and business programs.'}
+            ]
+        })
+        assert response.status_code == 200
+        data = response.get_json()
+        assert data['status'] == 'restored'
+
+        with client.session_transaction() as sess:
+            assert sess['chat_history'] == [('What programs do you offer?', 'We offer IT and business programs.')]
+
+
+def test_chat_route_limit_reached():
+    """Test chat route blocks new messages after limit"""
+    with app.test_client() as client:
+        with client.session_transaction() as sess:
+            sess['chat_history'] = [(f"Question {i}", f"Answer {i}") for i in range(1, 11)]
+
+        response = client.post('/chat', data={'question': 'Another question'})
+        assert response.status_code == 429
+        assert b'Free message limit reached' in response.data
+
+
+def test_chat_route_message_too_long():
+    """Test chat route rejects messages over 500 characters"""
+    with app.test_client() as client:
+        long_message = 'a' * 501
+        response = client.post('/chat', data={'question': long_message})
+        assert response.status_code == 400
+        assert b'Message too long' in response.data
+
+
 def test_api_chat_prerequisites():
     """Test API endpoint with prerequisites question"""
     with app.test_client() as client:

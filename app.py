@@ -22,6 +22,8 @@ FREQUENCY_PENALTY = 0
 PRESENCE_PENALTY = 0.6
 # limits how many questions we include in the prompt
 MAX_CONTEXT_QUESTIONS = 5
+# maximum number of user questions per chat session
+MAX_SESSION_MESSAGES = 10
 
 
 @app.route('/')
@@ -35,6 +37,9 @@ def agreement():
 @app.route('/chat', methods=['POST'])
 def chat():
     new_question = request.form['question']
+    if len(new_question) > 500:
+        return jsonify({'error': 'Message too long. Maximum 500 characters.'}), 400
+
     errors = get_moderation(new_question)
     if errors:
         for error in errors:
@@ -48,12 +53,15 @@ def chat():
     
     chat_history = session['chat_history']
     
+    if len(chat_history) >= MAX_SESSION_MESSAGES:
+        return jsonify({'error': 'Free message limit reached for this session. Start a new chat.'}), 429
+
     response = get_response(INSTRUCTIONS, chat_history, new_question)
     
     # Update chat history
     chat_history.append((new_question, response))
     # Keep only last 10 exchanges to avoid session getting too large
-    session['chat_history'] = chat_history[-10:]
+    session['chat_history'] = chat_history[-MAX_SESSION_MESSAGES:]
 
     return response
 
@@ -62,6 +70,9 @@ def chat():
 def api_chat():
     data = request.get_json() or {}
     new_question = data.get('question', '')
+    if len(new_question) > 500:
+        return jsonify({'error': 'Message too long. Maximum 500 characters.'}), 400
+
     errors = get_moderation(new_question)
     if errors:
         return jsonify({'errors': errors}), 400
@@ -71,11 +82,14 @@ def api_chat():
         session['chat_history'] = []
     
     chat_history = session['chat_history']
+    if len(chat_history) >= MAX_SESSION_MESSAGES:
+        return jsonify({'error': 'Free message limit reached for this session. Start a new chat.'}), 429
+    
     response = get_response(INSTRUCTIONS, chat_history, new_question)
     
     # Update chat history
     chat_history.append((new_question, response))
-    session['chat_history'] = chat_history[-10:]
+    session['chat_history'] = chat_history[-MAX_SESSION_MESSAGES:]
     
     return jsonify({'response': response})
 
@@ -85,6 +99,24 @@ def clear_chat():
     """Clear the chat history"""
     session['chat_history'] = []
     return jsonify({'status': 'success'})
+
+@app.route('/restore', methods=['POST'])
+def restore_chat():
+    """Restore chat history for the current browser session."""
+    data = request.get_json() or {}
+    history = data.get('history', [])
+    if not isinstance(history, list):
+        return jsonify({'error': 'Invalid history format.'}), 400
+
+    restored = []
+    for item in history:
+        question = item.get('question') if isinstance(item, dict) else None
+        response = item.get('response') if isinstance(item, dict) else None
+        if isinstance(question, str) and isinstance(response, str):
+            restored.append((question, response))
+
+    session['chat_history'] = restored[-MAX_SESSION_MESSAGES:]
+    return jsonify({'status': 'restored', 'message_count': len(session['chat_history'])})
 
 @app.route('/start', methods=['POST'])
 def start():

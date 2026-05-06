@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -17,15 +17,72 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   </head>
   <body>
-    <!-- Main Content -->
-    <div class="main-content">
-      <!-- Top Header -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img
+            src="{{ url_for('static', filename='img/coursegenie2.png') }}"
+            alt="CourseGenie"
+          />
+          <span>CourseGenie</span>
+        </div>
+        <button
+          class="sidebar-toggle"
+          id="sidebar-toggle"
+          onclick="toggleSidebar()"
+          title="Toggle sidebar"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="18" x2="20" y2="18" />
+          </svg>
+        </button>
+      </div>
+
+      <button class="new-chat-btn" id="new-chat-btn" onclick="createNewChat()">
+        + New Chat
+      </button>
+
+      <div class="chat-history-section">
+        <div class="history-title">Chat History</div>
+        <div class="history-list" id="session-list"></div>
+        <button
+          class="delete-all-btn"
+          id="delete-all-btn"
+          onclick="deleteAllSessions()"
+        >
+          Delete All Sessions
+        </button>
+      </div>
+    </div>
+
+    <div class="main-content" id="main-content">
       <div class="top-header">
+        <button
+          class="mobile-toggle"
+          id="mobile-toggle"
+          onclick="toggleSidebar()"
+          title="Open sidebar"
+        >
+          ☰
+        </button>
+
         <div class="header-title" id="chat-title">
           <span class="title-text"></span>
         </div>
 
-        <div class="header-actions">
+        <div class="header-meta">
+          <div class="message-counter" id="message-counter">
+            10 messages left
+          </div>
           <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">
             <svg
               width="18"
@@ -49,18 +106,18 @@
         </div>
       </div>
 
-      <!-- Chat Area -->
       <div class="chat-area" id="chat-history"></div>
 
-      <!-- Input Area -->
       <div class="input-area">
         <form id="chat-form" onsubmit="sendMessage(event)">
           <div class="input-wrapper">
+            <div class="char-counter" id="char-counter">0/500</div>
             <input
               id="chat-input"
               type="text"
               placeholder="Message CourseGenie"
               autocomplete="off"
+              maxlength="500"
               required
             />
             <button type="submit" class="send-btn" title="Send message">
@@ -81,6 +138,16 @@
         </form>
         <div class="input-footer">AI-generated, for reference only</div>
       </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <div class="session-menu" id="session-menu" hidden>
+      <button type="button" id="menu-rename-btn" onclick="renameSession()">
+        Rename
+      </button>
+      <button type="button" id="menu-delete-btn" onclick="deleteSession()">
+        Delete
+      </button>
     </div>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
