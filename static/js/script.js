@@ -30,6 +30,9 @@ window.addEventListener('DOMContentLoaded', () => {
     chatForm.addEventListener('submit', sendMessage);
     document.addEventListener('click', handlePageClick);
     chatInput.addEventListener('input', updateCharCounter);
+    chatInput.addEventListener('input', updateCharCounterDisplay);
+    chatInput.addEventListener('paste', handlePaste);
+    chatInput.addEventListener('keypress', handleCharLimit);
 });
 
 function loadSessions() {
@@ -90,6 +93,7 @@ function createNewChat() {
     saveSessions();
     renderSidebar();
     openSession(newSession.id);
+    closeSessionMenu();
     showToast('New chat session started. Your free messages have been reset.');
 }
 
@@ -166,7 +170,23 @@ function renderCurrentSession() {
 
 function setSessionTitle(name) {
     chatTitleEl.innerHTML = `<span class="title-text">${escapeHtml(name)}</span>`;
-    setTimeout(checkHeaderOverflow, 0);
+    checkHeaderOverflow();
+}
+
+function checkHeaderOverflow() {
+    const titleElement = document.querySelector('.title-text');
+    if (!titleElement) return;
+    
+    const headerTitle = document.querySelector('.header-title');
+    if (titleElement.scrollWidth > headerTitle.clientWidth) {
+        titleElement.style.whiteSpace = 'nowrap';
+        titleElement.style.overflow = 'hidden';
+        titleElement.style.textOverflow = 'ellipsis';
+    } else {
+        titleElement.style.whiteSpace = 'normal';
+        titleElement.style.overflow = 'visible';
+        titleElement.style.textOverflow = 'clip';
+    }
 }
 
 function renderHistory(history) {
@@ -512,7 +532,8 @@ function renameSession() {
 
     const newName = prompt('Rename this chat session', session.name);
     if (newName === null) {
-        return closeSessionMenu();
+        closeSessionMenu();
+        return;
     }
 
     const trimmed = newName.trim();
@@ -528,19 +549,34 @@ function renameSession() {
     closeSessionMenu();
 }
 
-function deleteAllSessions() {
-    const confirmed = confirm('Delete all chat sessions permanently? This action cannot be undone.');
-    if (!confirmed) return;
+function deleteSession() {
+    if (!currentMenuSessionId) return;
+    const session = sessions.find(item => item.id === currentMenuSessionId);
+    if (!session) return;
 
-    sessions = [];
-    const newSession = createDefaultSession('Chat session 1');
-    sessions = [newSession];
-    currentSessionId = newSession.id;
+    const confirmed = confirm('Delete this chat session permanently?');
+    if (!confirmed) {
+        closeSessionMenu();
+        return;
+    }
+
+    sessions = sessions.filter(item => item.id !== currentMenuSessionId);
+    if (sessions.length === 0) {
+        const newSession = createDefaultSession('Chat session 1');
+        sessions = [newSession];
+        currentSessionId = newSession.id;
+    } else if (currentSessionId === currentMenuSessionId) {
+        currentSessionId = sessions[0].id;
+    }
+
     saveSessions();
     renderSidebar();
     openSession(currentSessionId);
-    showToast('All chat sessions deleted.');
+    showToast('Chat session deleted.');
+    closeSessionMenu();
 }
+
+
 
 function showToast(message, duration = 3800) {
     clearTimeout(toastTimeout);
@@ -585,6 +621,59 @@ function loadTheme() {
     const savedTheme = localStorage.getItem('theme') || 'dark';
     if (savedTheme === 'light') {
         document.body.classList.add('light-theme');
+    }
+}
+
+function toggleTheme() {
+    document.body.classList.toggle('light-theme');
+    const theme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
+    localStorage.setItem('theme', theme);
+}
+
+function toggleSidebar() {
+    sidebar.classList.toggle('collapsed');
+    mainContent.classList.toggle('sidebar-collapsed');
+}
+
+function updateCharCounter() {
+    const length = chatInput.value.length;
+    if (length >= MAX_PROMPT_LENGTH) {
+        chatInput.value = chatInput.value.substring(0, MAX_PROMPT_LENGTH);
+        chatForm.querySelector('button').disabled = true;
+        showToast('Character limit reached (500 characters max)', 5000);
+    }
+    updateCharCounterDisplay();
+}
+
+function updateCharCounterDisplay() {
+    const length = chatInput.value.length;
+    const counter = document.getElementById('char-counter');
+    counter.textContent = `${length}/${MAX_PROMPT_LENGTH}`;
+    counter.classList.toggle('warning', length >= MAX_PROMPT_LENGTH * 0.9);
+    
+    if (length >= MAX_PROMPT_LENGTH) {
+        chatForm.querySelector('button').disabled = true;
+        chatInput.disabled = true;
+    } else {
+        chatForm.querySelector('button').disabled = false;
+        chatInput.disabled = false;
+    }
+}
+
+function handleCharLimit(event) {
+    if (chatInput.value.length >= MAX_PROMPT_LENGTH) {
+        event.preventDefault();
+    }
+}
+
+function handlePaste(event) {
+    const pastedText = (event.clipboardData || window.clipboardData).getData('text');
+    const currentLength = chatInput.value.length;
+    const newLength = currentLength + pastedText.length;
+    
+    if (newLength > MAX_PROMPT_LENGTH) {
+        event.preventDefault();
+        showToast('Cannot paste: would exceed 500 character limit', 5000);
     }
 }
 
