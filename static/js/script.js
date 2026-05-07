@@ -113,7 +113,7 @@ function createNewChat() {
     renderSidebar();
     openSession(newSession.id);
     closeSessionMenu();
-    showToast('New chat session started. Your free messages have been reset.');
+    showToast('New chat session started.');
 }
 
 function renderSidebar() {
@@ -531,7 +531,7 @@ function showLimitReached() {
 
 function restoreServerSession(history) {
     if (!Array.isArray(history) || history.length === 0) {
-        return fetch('/clear', { method: 'POST' }).catch(() => {});
+        return fetch('/start-session', { method: 'POST' }).catch(() => {});
     }
 
     return fetch('/restore', {

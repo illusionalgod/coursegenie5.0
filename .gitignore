@@ -13,6 +13,9 @@ env/
 clear_sessions.py
 .venv/
 
+# User data
+limit_state.json
+
 # IDEs and editors
 .vscode/
 .idea/
