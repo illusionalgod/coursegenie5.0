@@ -267,7 +267,7 @@ body.sidebar-closed .fixed-toggle {
   font-weight: 600;
   text-transform: uppercase;
   color: var(--text-secondary);
-  margin-bottom: 8px;
+  margin-bottom: 5px;
   padding: 0 8px;
   letter-spacing: 0.5px;
 }
@@ -275,10 +275,11 @@ body.sidebar-closed .fixed-toggle {
 .history-list {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 5px;
 }
 
 .history-item {
+  height: 44px;
   padding: 10px 12px;
   border-radius: 8px;
   cursor: pointer;
@@ -392,7 +393,7 @@ body.sidebar-closed .fixed-toggle {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 20px;
+  padding: 18px 20px;
   border-bottom: none;
   background-color: var(--bg-primary);
   position: relative;
@@ -468,19 +469,24 @@ body.sidebar-closed .fixed-toggle {
 }
 
 .icon-btn {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
   cursor: pointer;
   padding: 8px;
-  border-radius: 6px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s;
 }
 
 .icon-btn:hover {
   background-color: var(--bg-hover);
+  border-color: var(--text-secondary);
 }
 
 .icon-btn svg {
