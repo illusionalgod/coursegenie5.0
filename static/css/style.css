@@ -520,7 +520,7 @@ body.sidebar-closed .fixed-toggle {
 }
 
 .chat-area::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.08);
+  background: transparent;
 }
 
 .chat-area::-webkit-scrollbar-thumb {
