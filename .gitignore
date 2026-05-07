@@ -53,3 +53,4 @@ career_model.pkl
 career_recommendation_dataset.csv
 career_recommender.csv
 CHANGELOG.md
+career_model_trainer.py
