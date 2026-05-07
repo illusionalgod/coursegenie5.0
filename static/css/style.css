@@ -387,9 +387,11 @@ body.sidebar-closed .fixed-toggle {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  padding-bottom: 100px; /* Space for fixed input */
 }
 
 .top-header {
+  margin-top: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -801,9 +803,12 @@ body.sidebar-closed .fixed-toggle {
 
 /* Input Area */
 .input-area {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   padding: 16px 20px;
   background-color: var(--bg-primary);
-  border-top: none;
 }
 
 #chat-form {
@@ -899,8 +904,8 @@ body.sidebar-closed .fixed-toggle {
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 999px;
+  padding: 5px;
+  border-radius: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -908,8 +913,9 @@ body.sidebar-closed .fixed-toggle {
     background-color 0.2s,
     border-color 0.2s,
     color 0.2s;
-  min-width: 38px;
-  height: 38px;
+  min-width: 36px;
+  height: 36px;
+  font-size: 15px;
 }
 
 .icon-btn:hover {
