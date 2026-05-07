@@ -353,10 +353,7 @@ function appendMessage(role, content, className = 'message') {
     messageElement.innerHTML = `
         <div class="message ${className}">
             <div class="message-content">
-                <div class="message-header">
-                    <span class="message-role">${role}</span>
-                </div>
-                <div class="message-text">${isUser ? escapeHtml(content) : ''}</div>
+                <div class="message-text">${escapeHtml(content)}</div>
             </div>
         </div>
         <div class="message-actions">
