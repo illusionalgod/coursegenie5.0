@@ -324,7 +324,7 @@ function sendMessage(event) {
         })
         .then(data => {
             removeTypingIndicator(typingId);
-            appendMessage('CourseGenie', data, 'bot-message');
+            appendMessage('CourseGenie', data, 'bot-message', true);
             const currentSession = getCurrentSession();
             currentSession.history.push({ role: 'assistant', content: data });
             currentSession.lastUpdated = new Date().toISOString();
@@ -338,7 +338,7 @@ function sendMessage(event) {
         .catch(error => {
             console.error('Error:', error);
             removeTypingIndicator(typingId);
-            appendMessage('CourseGenie', error.message || 'Sorry, something went wrong. Please try again.', 'bot-message');
+            appendMessage('CourseGenie', error.message || 'Sorry, something went wrong. Please try again.', 'bot-message', true);
             enableInputAndButton();
             if (error.message && error.message.toLowerCase().includes('limit')) {
                 showLimitReached();
@@ -346,7 +346,7 @@ function sendMessage(event) {
         });
 }
 
-function appendMessage(role, content, className = 'message') {
+function appendMessage(role, content, className = 'message', animate = false) {
     const messageElement = document.createElement('div');
     messageElement.className = `message-wrapper ${className}`;
     const isUser = className.includes('user');
@@ -368,7 +368,7 @@ function appendMessage(role, content, className = 'message') {
     chatHistory.appendChild(messageElement);
     chatHistory.scrollTop = chatHistory.scrollHeight;
 
-    if (!isUser) {
+    if (!isUser && animate) {
         typeWriter(messageElement.querySelector('.message-text'), content);
     }
 }
@@ -732,7 +732,7 @@ function handlePaste(event) {
     }
 }
 
-function typeWriter(element, text, speed = 10) {
+function typeWriter(element, text, speed = 5) {
     let i = 0;
     element.innerHTML = '';
     function type() {
