@@ -17,6 +17,14 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   </head>
   <body>
+    <button
+      class="fixed-toggle"
+      id="fixed-toggle"
+      onclick="toggleSidebar()"
+      title="Toggle sidebar"
+    >
+      ☰
+    </button>
     <div class="sidebar" id="sidebar">
       <div class="sidebar-header">
         <div class="sidebar-logo">
@@ -110,7 +118,6 @@
               type="text"
               placeholder="Message CourseGenie"
               autocomplete="off"
-              maxlength="500"
               required
             />
             <button type="submit" class="send-btn" title="Send message">

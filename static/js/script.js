@@ -26,6 +26,7 @@ window.addEventListener('DOMContentLoaded', () => {
     loadSessions();
     renderSidebar();
     openSession(getCurrentSession().id);
+    updateSidebarState();
 
     chatForm.addEventListener('submit', sendMessage);
     document.addEventListener('click', handlePageClick);
@@ -633,14 +634,20 @@ function toggleTheme() {
 function toggleSidebar() {
     sidebar.classList.toggle('collapsed');
     mainContent.classList.toggle('sidebar-collapsed');
+    document.body.classList.toggle('sidebar-closed', sidebar.classList.contains('collapsed'));
+}
+
+function updateSidebarState() {
+    document.body.classList.toggle('sidebar-closed', sidebar.classList.contains('collapsed'));
 }
 
 function updateCharCounter() {
     const length = chatInput.value.length;
-    if (length >= MAX_PROMPT_LENGTH) {
-        chatInput.value = chatInput.value.substring(0, MAX_PROMPT_LENGTH);
+    if (length > MAX_PROMPT_LENGTH) {
         chatForm.querySelector('button').disabled = true;
         showToast('Character limit reached (500 characters max)', 5000);
+    } else {
+        chatForm.querySelector('button').disabled = false;
     }
     updateCharCounterDisplay();
 }
@@ -651,19 +658,15 @@ function updateCharCounterDisplay() {
     counter.textContent = `${length}/${MAX_PROMPT_LENGTH}`;
     counter.classList.toggle('warning', length >= MAX_PROMPT_LENGTH * 0.9);
     
-    if (length >= MAX_PROMPT_LENGTH) {
+    if (length > MAX_PROMPT_LENGTH) {
         chatForm.querySelector('button').disabled = true;
-        chatInput.disabled = true;
     } else {
         chatForm.querySelector('button').disabled = false;
-        chatInput.disabled = false;
     }
 }
 
 function handleCharLimit(event) {
-    if (chatInput.value.length >= MAX_PROMPT_LENGTH) {
-        event.preventDefault();
-    }
+    // Allow typing beyond limit for editing, but send will be blocked
 }
 
 function handlePaste(event) {
