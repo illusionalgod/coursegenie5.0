@@ -65,14 +65,16 @@ body {
   position: fixed;
   top: 12px;
   left: 12px;
+  width: 40px;
+  height: 40px;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 8px;
+  border-radius: 10px;
+  padding: 0;
   cursor: pointer;
   z-index: 1001;
   color: var(--text-primary);
-  font-size: 16px;
+  font-size: 18px;
   display: none;
 }
 
@@ -195,8 +197,13 @@ body.sidebar-closed .fixed-toggle {
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
-  padding: 6px;
-  border-radius: 6px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sidebar-toggle:hover {
@@ -306,8 +313,10 @@ body.sidebar-closed .fixed-toggle {
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 6px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -315,6 +324,8 @@ body.sidebar-closed .fixed-toggle {
     opacity 0.2s,
     background-color 0.2s;
   flex-shrink: 0;
+  font-size: 18px;
+  line-height: 1;
 }
 
 .history-item:hover .delete-btn,
@@ -337,7 +348,8 @@ body.sidebar-closed .fixed-toggle {
 }
 
 .history-item.active {
-  background-color: var(--bg-secondary);
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .main-content {
@@ -834,7 +846,7 @@ body.sidebar-closed .fixed-toggle {
     transform: translateX(-100%);
   }
 
-  .sidebar.open {
+  .sidebar:not(.collapsed) {
     transform: translateX(0);
   }
 

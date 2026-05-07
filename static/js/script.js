@@ -25,7 +25,12 @@ window.addEventListener('DOMContentLoaded', () => {
     loadTheme();
     loadSessions();
     renderSidebar();
-    openSession(getCurrentSession().id);
+    if (sessions.length > 0 && currentSessionId) {
+        openSession(currentSessionId);
+    } else {
+        setSessionTitle('CourseGenie');
+        showWelcomeScreen();
+    }
     updateSidebarState();
 
     chatForm.addEventListener('submit', sendMessage);
@@ -51,14 +56,12 @@ function loadSessions() {
     }
 
     if (!Array.isArray(sessions) || sessions.length === 0) {
-        const defaultSession = createDefaultSession('Chat session 1');
-        sessions = [defaultSession];
-        currentSessionId = defaultSession.id;
-        saveSessions();
+        sessions = [];
+        currentSessionId = null;
     }
 
-    if (!currentSessionId || !sessions.some(s => s.id === currentSessionId)) {
-        currentSessionId = sessions[0].id;
+    if (currentSessionId && !sessions.some(s => s.id === currentSessionId)) {
+        currentSessionId = null;
     }
 }
 
@@ -67,7 +70,22 @@ function saveSessions() {
 }
 
 function getCurrentSession() {
-    return sessions.find(session => session.id === currentSessionId) || sessions[0];
+    return sessions.find(session => session.id === currentSessionId) || null;
+}
+
+function ensureCurrentSession() {
+    let session = getCurrentSession();
+    if (!session) {
+        const sessionCount = sessions.length + 1;
+        const newSession = createDefaultSession(`Chat session ${sessionCount}`);
+        sessions.unshift(newSession);
+        currentSessionId = newSession.id;
+        saveSessions();
+        renderSidebar();
+        setSessionTitle(newSession.name);
+        session = newSession;
+    }
+    return session;
 }
 
 function createDefaultSession(name) {
@@ -114,14 +132,16 @@ function renderSidebar() {
                 <span class="history-text">${escapeHtml(session.name)}</span>
                 <div class="history-meta">${lastUpdated}</div>
             </div>
-            <button class="session-menu-btn" type="button" aria-label="Chat menu">&hellip;</button>
+            ${session.id === currentSessionId ? '<button class="session-menu-btn" type="button" aria-label="Chat menu">&hellip;</button>' : ''}
         `;
 
         const menuButton = item.querySelector('.session-menu-btn');
-        menuButton.addEventListener('click', (event) => {
-            event.stopPropagation();
-            openSessionMenu(event, session.id);
-        });
+        if (menuButton) {
+            menuButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                openSessionMenu(event, session.id);
+            });
+        }
 
         item.addEventListener('click', () => {
             openSession(session.id);
@@ -145,14 +165,22 @@ function renderSidebar() {
 }
 
 function openSession(sessionId) {
-    if (currentSessionId === sessionId && !chatHistory.innerHTML.trim()) {
-        renderCurrentSession();
-        restoreServerSession(getCurrentSession().history);
+    const newSession = sessions.find(session => session.id === sessionId);
+    if (!newSession) {
+        currentSessionId = null;
+        saveSessions();
+        renderSidebar();
+        setSessionTitle('CourseGenie');
+        chatHistory.innerHTML = '';
+        showWelcomeScreen();
         return;
     }
 
-    const newSession = sessions.find(session => session.id === sessionId);
-    if (!newSession) return;
+    if (currentSessionId === sessionId && !chatHistory.innerHTML.trim()) {
+        renderCurrentSession();
+        restoreServerSession(newSession.history);
+        return;
+    }
 
     currentSessionId = newSession.id;
     saveSessions();
@@ -163,6 +191,14 @@ function openSession(sessionId) {
 
 function renderCurrentSession() {
     const session = getCurrentSession();
+    if (!session) {
+        setSessionTitle('CourseGenie');
+        chatHistory.innerHTML = '';
+        showWelcomeScreen();
+        updateCounter([]);
+        updateCharCounter();
+        return;
+    }
     setSessionTitle(session.name);
     renderHistory(session.history);
     updateCounter(session.history);
@@ -241,6 +277,7 @@ function sendMessage(event) {
     const message = chatInput.value.trim();
     if (!message) return;
 
+    const currentSession = ensureCurrentSession();
     const remaining = getRemainingMessages();
     if (remaining <= 0) {
         showLimitReached();
@@ -255,7 +292,6 @@ function sendMessage(event) {
     chatInput.value = '';
     appendMessage('You', message, 'user-message');
 
-    const currentSession = getCurrentSession();
     const wasEmpty = currentSession.history.length === 0;
     currentSession.history.push({ role: 'user', content: message });
     currentSession.lastUpdated = new Date().toISOString();
@@ -563,10 +599,18 @@ function deleteSession() {
 
     sessions = sessions.filter(item => item.id !== currentMenuSessionId);
     if (sessions.length === 0) {
-        const newSession = createDefaultSession('Chat session 1');
-        sessions = [newSession];
-        currentSessionId = newSession.id;
-    } else if (currentSessionId === currentMenuSessionId) {
+        currentSessionId = null;
+        saveSessions();
+        renderSidebar();
+        chatHistory.innerHTML = '';
+        setSessionTitle('CourseGenie');
+        showWelcomeScreen();
+        showToast('Chat session deleted.');
+        closeSessionMenu();
+        return;
+    }
+
+    if (currentSessionId === currentMenuSessionId) {
         currentSessionId = sessions[0].id;
     }
 
