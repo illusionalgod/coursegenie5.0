@@ -39,28 +39,32 @@ def load_limit_state():
                 return json.load(f)
         except:
             pass
-    return {'message_count': 0, 'last_limit_time': None}
+    return {'ips': {}}
 
 def save_limit_state(state):
     with open(LIMIT_FILE, 'w') as f:
         json.dump(state, f)
 
-def check_global_limit():
+def check_global_limit(ip):
     state = load_limit_state()
+    user_state = state['ips'].get(ip, {'message_count': 0, 'last_limit_time': None})
     now = datetime.now()
-    if state['last_limit_time']:
-        last_time = datetime.fromisoformat(state['last_limit_time'])
+    if user_state['last_limit_time']:
+        last_time = datetime.fromisoformat(user_state['last_limit_time'])
         if now - last_time > timedelta(hours=COOLDOWN_HOURS):
-            state['message_count'] = 0
-            state['last_limit_time'] = None
+            user_state['message_count'] = 0
+            user_state['last_limit_time'] = None
+            state['ips'][ip] = user_state
             save_limit_state(state)
-    return state['message_count'] >= GLOBAL_MAX_MESSAGES
+    return user_state['message_count'] >= GLOBAL_MAX_MESSAGES
 
-def increment_global_count():
+def increment_global_count(ip):
     state = load_limit_state()
-    state['message_count'] += 1
-    if state['message_count'] >= GLOBAL_MAX_MESSAGES:
-        state['last_limit_time'] = datetime.now().isoformat()
+    user_state = state['ips'].get(ip, {'message_count': 0, 'last_limit_time': None})
+    user_state['message_count'] += 1
+    if user_state['message_count'] >= GLOBAL_MAX_MESSAGES:
+        user_state['last_limit_time'] = datetime.now().isoformat()
+    state['ips'][ip] = user_state
     save_limit_state(state)
 
 
@@ -74,6 +78,7 @@ def agreement():
 
 @app.route('/chat', methods=['POST'])
 def chat():
+    ip = request.remote_addr
     new_question = request.form['question']
     if len(new_question) > 500:
         return jsonify({'error': 'Message too long. Maximum 500 characters.'}), 400
@@ -86,7 +91,7 @@ def chat():
         return jsonify({'error': 'Your message was flagged by content moderation.'}), 400
 
     # Check global limit
-    if check_global_limit():
+    if check_global_limit(ip):
         return jsonify({'error': 'Free message limit reached. Wait 6 hours for reset.'}), 429
 
     # Get or initialize chat history from session
@@ -106,13 +111,14 @@ def chat():
     session['chat_history'] = chat_history[-MAX_SESSION_MESSAGES:]
 
     # Increment global count
-    increment_global_count()
+    increment_global_count(ip)
 
     return response
 
 
 @app.route('/api/chat', methods=['POST'])
 def api_chat():
+    ip = request.remote_addr
     data = request.get_json() or {}
     new_question = data.get('question', '')
     if len(new_question) > 500:
@@ -123,7 +129,7 @@ def api_chat():
         return jsonify({'errors': errors}), 400
     
     # Check global limit
-    if check_global_limit():
+    if check_global_limit(ip):
         return jsonify({'error': 'Free message limit reached. Wait 6 hours for reset.'}), 429
     
     # Get or initialize chat history from session
@@ -141,23 +147,25 @@ def api_chat():
     session['chat_history'] = chat_history[-MAX_SESSION_MESSAGES:]
     
     # Increment global count
-    increment_global_count()
+    increment_global_count(ip)
     
     return jsonify({'response': response})
 
 
 @app.route('/limit-status', methods=['GET'])
 def limit_status():
+    ip = request.remote_addr
     state = load_limit_state()
+    user_state = state['ips'].get(ip, {'message_count': 0, 'last_limit_time': None})
     now = datetime.now()
     cooldown_remaining = None
-    if state['last_limit_time']:
-        last_time = datetime.fromisoformat(state['last_limit_time'])
+    if user_state['last_limit_time']:
+        last_time = datetime.fromisoformat(user_state['last_limit_time'])
         remaining = timedelta(hours=COOLDOWN_HOURS) - (now - last_time)
         if remaining > timedelta(0):
             cooldown_remaining = int(remaining.total_seconds())
     return jsonify({
-        'message_count': state['message_count'],
+        'message_count': user_state['message_count'],
         'max_messages': GLOBAL_MAX_MESSAGES,
         'cooldown_remaining': cooldown_remaining
     })
@@ -166,12 +174,13 @@ def limit_status():
 @app.route('/clear', methods=['POST'])
 def clear_chat():
     """Clear the chat history"""
+    ip = request.remote_addr
     session['chat_history'] = []
-    # Reset global limit for admin
+    # Reset global limit for the current IP
     state = load_limit_state()
-    state['message_count'] = 0
-    state['last_limit_time'] = None
-    save_limit_state(state)
+    if ip in state['ips']:
+        state['ips'][ip] = {'message_count': 0, 'last_limit_time': None}
+        save_limit_state(state)
     return jsonify({'status': 'success'})
 
 @app.route('/restore', methods=['POST'])

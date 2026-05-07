@@ -46,4 +46,7 @@ credentials.json
 
 career_model.pkl
 *.pkl
+career_model.pkl
 career_recommendation_dataset.csv
+career_recommender.csv
+CHANGELOG.md
