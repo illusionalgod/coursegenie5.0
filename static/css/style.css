@@ -904,7 +904,10 @@ body.sidebar-closed .fixed-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s;
   min-width: 38px;
   height: 38px;
 }

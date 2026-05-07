@@ -1,5 +1,8 @@
 import os
 import openai
+import json
+import time
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, jsonify, session
 from chatbot_logic import get_response, get_moderation, INSTRUCTIONS
@@ -24,6 +27,41 @@ PRESENCE_PENALTY = 0.6
 MAX_CONTEXT_QUESTIONS = 5
 # maximum number of user questions per chat session
 MAX_SESSION_MESSAGES = 10
+# global message limit
+GLOBAL_MAX_MESSAGES = 10
+COOLDOWN_HOURS = 6
+LIMIT_FILE = 'limit_state.json'
+
+def load_limit_state():
+    if os.path.exists(LIMIT_FILE):
+        try:
+            with open(LIMIT_FILE, 'r') as f:
+                return json.load(f)
+        except:
+            pass
+    return {'message_count': 0, 'last_limit_time': None}
+
+def save_limit_state(state):
+    with open(LIMIT_FILE, 'w') as f:
+        json.dump(state, f)
+
+def check_global_limit():
+    state = load_limit_state()
+    now = datetime.now()
+    if state['last_limit_time']:
+        last_time = datetime.fromisoformat(state['last_limit_time'])
+        if now - last_time > timedelta(hours=COOLDOWN_HOURS):
+            state['message_count'] = 0
+            state['last_limit_time'] = None
+            save_limit_state(state)
+    return state['message_count'] >= GLOBAL_MAX_MESSAGES
+
+def increment_global_count():
+    state = load_limit_state()
+    state['message_count'] += 1
+    if state['message_count'] >= GLOBAL_MAX_MESSAGES:
+        state['last_limit_time'] = datetime.now().isoformat()
+    save_limit_state(state)
 
 
 @app.route('/')
@@ -47,6 +85,10 @@ def chat():
         # show errors on the index page
         return jsonify({'error': 'Your message was flagged by content moderation.'}), 400
 
+    # Check global limit
+    if check_global_limit():
+        return jsonify({'error': 'Free message limit reached. Wait 6 hours for reset.'}), 429
+
     # Get or initialize chat history from session
     if 'chat_history' not in session:
         session['chat_history'] = []
@@ -63,6 +105,9 @@ def chat():
     # Keep only last 10 exchanges to avoid session getting too large
     session['chat_history'] = chat_history[-MAX_SESSION_MESSAGES:]
 
+    # Increment global count
+    increment_global_count()
+
     return response
 
 
@@ -76,6 +121,10 @@ def api_chat():
     errors = get_moderation(new_question)
     if errors:
         return jsonify({'errors': errors}), 400
+    
+    # Check global limit
+    if check_global_limit():
+        return jsonify({'error': 'Free message limit reached. Wait 6 hours for reset.'}), 429
     
     # Get or initialize chat history from session
     if 'chat_history' not in session:
@@ -91,13 +140,38 @@ def api_chat():
     chat_history.append((new_question, response))
     session['chat_history'] = chat_history[-MAX_SESSION_MESSAGES:]
     
+    # Increment global count
+    increment_global_count()
+    
     return jsonify({'response': response})
+
+
+@app.route('/limit-status', methods=['GET'])
+def limit_status():
+    state = load_limit_state()
+    now = datetime.now()
+    cooldown_remaining = None
+    if state['last_limit_time']:
+        last_time = datetime.fromisoformat(state['last_limit_time'])
+        remaining = timedelta(hours=COOLDOWN_HOURS) - (now - last_time)
+        if remaining > timedelta(0):
+            cooldown_remaining = int(remaining.total_seconds())
+    return jsonify({
+        'message_count': state['message_count'],
+        'max_messages': GLOBAL_MAX_MESSAGES,
+        'cooldown_remaining': cooldown_remaining
+    })
 
 
 @app.route('/clear', methods=['POST'])
 def clear_chat():
     """Clear the chat history"""
     session['chat_history'] = []
+    # Reset global limit for admin
+    state = load_limit_state()
+    state['message_count'] = 0
+    state['last_limit_time'] = None
+    save_limit_state(state)
     return jsonify({'status': 'success'})
 
 @app.route('/restore', methods=['POST'])

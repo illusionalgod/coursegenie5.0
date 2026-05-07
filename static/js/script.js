@@ -1,5 +1,5 @@
 const MAX_MESSAGES = 10;
-const MAX_SESSIONS = 3;
+const MAX_SESSIONS = 2;
 const MAX_PROMPT_LENGTH = 500;
 const RESET_HOURS = 1;
 const STORAGE_KEY = 'coursegenie_chat_sessions_v1';
@@ -270,14 +270,14 @@ function fillExample(question) {
     sendMessage(new Event('submit'));
 }
 
-function sendMessage(event) {
+async function sendMessage(event) {
     event.preventDefault();
 
     const message = chatInput.value.trim();
     if (!message) return;
 
     const currentSession = ensureCurrentSession();
-    const remaining = getRemainingMessages();
+    const remaining = await getRemainingMessages();
     if (remaining <= 0) {
         showLimitReached();
         return;
@@ -331,9 +331,12 @@ function sendMessage(event) {
             saveSessions();
             updateCounter(currentSession.history);
             enableInputAndButton();
-            if (getRemainingMessages() <= 0) {
-                showLimitReached();
-            }
+            (async () => {
+                const remaining = await getRemainingMessages();
+                if (remaining <= 0) {
+                    showLimitReached();
+                }
+            })();
         })
         .catch(error => {
             console.error('Error:', error);
@@ -453,29 +456,47 @@ function removeTypingIndicator(typingId) {
     }
 }
 
-function getRemainingMessages() {
-    const currentSession = getCurrentSession();
-    const used = currentSession.history.filter(message => message.role === 'user').length;
-    const limitReachedAt = currentSession.limitReachedAt;
-    if (limitReachedAt) {
-        const elapsed = Date.now() - new Date(limitReachedAt).getTime();
-        const resetTime = RESET_HOURS * 60 * 60 * 1000; // 1 hour in ms
-        if (elapsed >= resetTime) {
-            // Reset the limit
-            currentSession.limitReachedAt = null;
-            currentSession.history = []; // Clear history on reset
-            saveSessions();
-            return MAX_MESSAGES;
-        }
+async function getRemainingMessages() {
+    try {
+        const response = await fetch('/limit-status');
+        const data = await response.json();
+        return Math.max(0, data.max_messages - data.message_count);
+    } catch {
+        // Fallback
+        const currentSession = getCurrentSession();
+        const used = currentSession.history.filter(message => message.role === 'user').length;
+        return Math.max(0, MAX_MESSAGES - used);
     }
-    return Math.max(0, MAX_MESSAGES - used);
 }
 
 function updateCounter(history) {
-    const used = history.filter(message => message.role === 'user').length;
-    const remaining = Math.max(0, MAX_MESSAGES - used);
-    messageCounter.textContent = `${remaining} message${remaining === 1 ? '' : 's'} left`;
-    messageCounter.classList.toggle('warning', remaining <= 2);
+    // Fetch global limit status
+    fetch('/limit-status')
+        .then(response => response.json())
+        .then(data => {
+            const remaining = Math.max(0, data.max_messages - data.message_count);
+            messageCounter.textContent = `${remaining} message${remaining === 1 ? '' : 's'} left`;
+            messageCounter.classList.toggle('warning', remaining <= 2);
+
+            // Add tooltip
+            let tooltip = '';
+            if (data.cooldown_remaining) {
+                const hours = Math.floor(data.cooldown_remaining / 3600);
+                const minutes = Math.floor((data.cooldown_remaining % 3600) / 60);
+                tooltip = `Limit reached. Reset in ${hours}h ${minutes}m`;
+            } else {
+                tooltip = 'Global message limit: 10 per 6 hours';
+            }
+            messageCounter.title = tooltip;
+        })
+        .catch(() => {
+            // Fallback to local calculation
+            const used = history.filter(message => message.role === 'user').length;
+            const remaining = Math.max(0, MAX_MESSAGES - used);
+            messageCounter.textContent = `${remaining} message${remaining === 1 ? '' : 's'} left`;
+            messageCounter.classList.toggle('warning', remaining <= 2);
+            messageCounter.title = 'Global message limit: 10 per 6 hours';
+        });
 }
 
 function disableInputAndButton(message = 'Responding...') {
@@ -484,8 +505,8 @@ function disableInputAndButton(message = 'Responding...') {
     chatForm.querySelector('button').disabled = true;
 }
 
-function enableInputAndButton() {
-    const remaining = getRemainingMessages();
+async function enableInputAndButton() {
+    const remaining = await getRemainingMessages();
     if (remaining <= 0) {
         chatInput.disabled = true;
         chatInput.setAttribute('placeholder', 'Free messages exhausted. Start a new chat.');
