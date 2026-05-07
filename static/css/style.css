@@ -384,9 +384,10 @@ body.sidebar-closed .fixed-toggle {
 }
 
 .main-content {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   padding-bottom: 100px; /* Space for fixed input */
 }
 
@@ -497,16 +498,43 @@ body.sidebar-closed .fixed-toggle {
 }
 
 .chat-area {
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 20px;
+  scrollbar-gutter: stable;
+  padding: 20px 20px 140px;
   background-color: var(--bg-primary);
+  position: relative;
 }
 
 #chat-history {
   max-width: 800px;
   margin: 0 auto;
+  min-width: 800px;
+  padding-right: 12px;
+}
+
+.chat-area::-webkit-scrollbar {
+  width: 12px;
+}
+
+.chat-area::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.chat-area::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+}
+
+.chat-area::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.chat-area {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) rgba(255, 255, 255, 0.08);
 }
 
 .welcome-screen {
@@ -751,6 +779,13 @@ body.sidebar-closed .fixed-toggle {
   margin-bottom: 20px;
 }
 
+.typing-indicator .message-content {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
 .typing-dots {
   display: flex;
   align-items: center;
@@ -935,25 +970,6 @@ body.sidebar-closed .fixed-toggle {
   text-align: center;
   font-size: 12px;
   color: var(--text-secondary);
-}
-
-body::-webkit-scrollbar,
-html::-webkit-scrollbar,
-.chat-area::-webkit-scrollbar {
-  width: 10px;
-}
-
-body::-webkit-scrollbar-track,
-html::-webkit-scrollbar-track,
-.chat-area::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-body::-webkit-scrollbar-thumb,
-html::-webkit-scrollbar-thumb,
-.chat-area::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 5px;
 }
 
 body {

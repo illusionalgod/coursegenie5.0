@@ -30,6 +30,7 @@ window.addEventListener('DOMContentLoaded', () => {
     } else {
         setSessionTitle('CourseGenie');
         showWelcomeScreen();
+        updateCounter([]);
     }
     updateSidebarState();
 
@@ -39,6 +40,11 @@ window.addEventListener('DOMContentLoaded', () => {
     chatInput.addEventListener('input', updateCharCounterDisplay);
     chatInput.addEventListener('paste', handlePaste);
     chatInput.addEventListener('keypress', handleCharLimit);
+    chatInput.addEventListener('click', () => {
+        if (sidebar.classList.contains('collapsed') === false) {
+            toggleSidebar();
+        }
+    });
 });
 
 function loadSessions() {
