@@ -130,7 +130,6 @@ function renderSidebar() {
         item.innerHTML = `
             <div class="history-content">
                 <span class="history-text">${escapeHtml(session.name)}</span>
-                <div class="history-meta">${lastUpdated}</div>
             </div>
             ${session.id === currentSessionId ? '<button class="session-menu-btn" type="button" aria-label="Chat menu">&hellip;</button>' : ''}
         `;
@@ -290,6 +289,7 @@ function sendMessage(event) {
     }
 
     chatInput.value = '';
+    updateCharCounterDisplay();
     appendMessage('You', message, 'user-message');
 
     const wasEmpty = currentSession.history.length === 0;
@@ -664,18 +664,32 @@ function loadTheme() {
     if (savedTheme === 'light') {
         document.body.classList.add('light-theme');
     }
+    updateThemeIcon();
 }
 
 function toggleTheme() {
     document.body.classList.toggle('light-theme');
     const theme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
     localStorage.setItem('theme', theme);
+    updateThemeIcon();
 }
 
 function toggleSidebar() {
     sidebar.classList.toggle('collapsed');
     mainContent.classList.toggle('sidebar-collapsed');
     document.body.classList.toggle('sidebar-closed', sidebar.classList.contains('collapsed'));
+}
+
+function updateThemeIcon() {
+    const isLight = document.body.classList.contains('light-theme');
+    const fixedToggle = document.getElementById('fixed-toggle');
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    if (fixedToggle) fixedToggle.innerHTML = isLight ? '☀️' : '🌙';
+    if (sidebarToggle) {
+        sidebarToggle.innerHTML = isLight ? 
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>' : 
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+    }
 }
 
 function updateSidebarState() {
@@ -721,7 +735,7 @@ function handlePaste(event) {
     }
 }
 
-function typeWriter(element, text, speed = 20) {
+function typeWriter(element, text, speed = 10) {
     let i = 0;
     element.innerHTML = '';
     function type() {

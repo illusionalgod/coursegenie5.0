@@ -395,6 +395,7 @@ body.sidebar-closed .fixed-toggle {
   padding: 12px 20px;
   border-bottom: none;
   background-color: var(--bg-primary);
+  position: relative;
 }
 
 .header-title {
@@ -406,13 +407,14 @@ body.sidebar-closed .fixed-toggle {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  position: relative;
-  padding: 0 20px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 600px;
+  margin: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  max-width: 600px;
-  margin: 0 auto;
 }
 
 .header-title .title-text {
@@ -571,6 +573,10 @@ body.sidebar-closed .fixed-toggle {
 
 .user-message .message {
   flex-direction: row-reverse;
+}
+
+.message-wrapper.bot-message .message {
+  max-width: 100%;
 }
 
 .message-content {
@@ -838,6 +844,10 @@ body.sidebar-closed .fixed-toggle {
   font-size: 15px;
   font-family: inherit;
   outline: none;
+}
+
+#chat-input:focus {
+  border-bottom: 1px solid var(--accent);
 }
 
 #chat-input::placeholder {
