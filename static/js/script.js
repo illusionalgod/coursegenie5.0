@@ -359,10 +359,15 @@ function appendMessage(role, content, className = 'message', animate = false) {
     const messageElement = document.createElement('div');
     messageElement.className = `message-wrapper ${className}`;
     const isUser = className.includes('user');
+    const isBot = className.includes('bot-message');
+    
+    // Render markdown for bot messages, plain text for user messages
+    const displayContent = isBot ? formatMarkdown(content) : escapeHtml(content);
+    
     messageElement.innerHTML = `
         <div class="message ${className}">
             <div class="message-content">
-                <div class="message-text">${escapeHtml(content)}</div>
+                <div class="message-text">${displayContent}</div>
             </div>
         </div>
         <div class="message-actions">
@@ -377,10 +382,12 @@ function appendMessage(role, content, className = 'message', animate = false) {
     chatHistory.appendChild(messageElement);
     chatHistory.scrollTop = chatHistory.scrollHeight;
 
-    if (!isUser && animate) {
-        typeWriter(messageElement.querySelector('.message-text'), content);
+    if (!isUser && animate && isBot) {
+        // For bot messages with markdown, we don't use typeWriter as it expects plain text
+        // The markdown is already rendered, so just let it display
     }
 }
+
 
 function escapeHtml(text) {
     const div = document.createElement('div');
