@@ -684,7 +684,7 @@ function updateThemeIcon() {
     const isLight = document.body.classList.contains('light-theme');
     const themeToggle = document.getElementById('theme-toggle');
     if (themeToggle) {
-        themeToggle.textContent = isLight ? '🌙' : '☀️';
+        themeToggle.textContent = isLight ? '☾' : '☀';
         themeToggle.title = isLight ? 'Switch to dark mode' : 'Switch to light mode';
     }
 }
