@@ -25,6 +25,10 @@ window.addEventListener('DOMContentLoaded', () => {
     loadTheme();
     loadSessions();
     renderSidebar();
+    // Close sidebar by default on app start
+    if (!sidebar.classList.contains('collapsed')) {
+        toggleSidebar();
+    }
     if (sessions.length > 0 && currentSessionId) {
         openSession(currentSessionId);
     } else {
@@ -644,6 +648,10 @@ function deleteSession() {
         showWelcomeScreen();
         showToast('Chat session deleted.');
         closeSessionMenu();
+        // Close sidebar after clearing all sessions
+        if (!sidebar.classList.contains('collapsed')) {
+            toggleSidebar();
+        }
         return;
     }
 
