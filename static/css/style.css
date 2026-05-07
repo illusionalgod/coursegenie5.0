@@ -498,7 +498,8 @@ body.sidebar-closed .fixed-toggle {
 
 .chat-area {
   flex: 1;
-  overflow: visible;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px;
   background-color: var(--bg-primary);
 }
@@ -937,17 +938,20 @@ body.sidebar-closed .fixed-toggle {
 }
 
 body::-webkit-scrollbar,
-html::-webkit-scrollbar {
+html::-webkit-scrollbar,
+.chat-area::-webkit-scrollbar {
   width: 10px;
 }
 
 body::-webkit-scrollbar-track,
-html::-webkit-scrollbar-track {
+html::-webkit-scrollbar-track,
+.chat-area::-webkit-scrollbar-track {
   background: transparent;
 }
 
 body::-webkit-scrollbar-thumb,
-html::-webkit-scrollbar-thumb {
+html::-webkit-scrollbar-thumb,
+.chat-area::-webkit-scrollbar-thumb {
   background: var(--border-color);
   border-radius: 5px;
 }

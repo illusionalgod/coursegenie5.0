@@ -505,10 +505,16 @@ function disableInputAndButton(message = 'Responding...') {
     chatForm.querySelector('button').disabled = true;
 }
 
+function disableButtonOnly(message = 'Free messages exhausted. Start a new chat.') {
+    chatInput.disabled = false;
+    chatInput.setAttribute('placeholder', message);
+    chatForm.querySelector('button').disabled = true;
+}
+
 async function enableInputAndButton() {
     const remaining = await getRemainingMessages();
     if (remaining <= 0) {
-        chatInput.disabled = true;
+        chatInput.disabled = false;
         chatInput.setAttribute('placeholder', 'Free messages exhausted. Start a new chat.');
         chatForm.querySelector('button').disabled = true;
         return;
@@ -525,7 +531,7 @@ function showLimitReached() {
         currentSession.limitReachedAt = new Date().toISOString();
         saveSessions();
     }
-    disableInputAndButton('Free messages exhausted. Wait 1 hour for reset.');
+    disableButtonOnly('Free messages exhausted. Wait 1 hour for reset.');
     showToast('You have run out of free messages for this chat. Wait 1 hour for reset or start a new session.');
 }
 
