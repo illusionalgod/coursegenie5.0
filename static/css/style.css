@@ -663,6 +663,10 @@ body.sidebar-closed .fixed-toggle {
   word-wrap: break-word;
 }
 
+.bot-message .message-text {
+  text-align: justify;
+}
+
 .message-text pre {
   background-color: var(--bg-tertiary);
   border: 1px solid var(--border-color);
